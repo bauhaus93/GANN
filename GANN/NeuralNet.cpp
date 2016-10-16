@@ -8,7 +8,7 @@ NeuralNet::NeuralNet(int layerCount_, int hiddenSize_, int inputSize_, int outpu
 	inputSize{ inputSize_ },
 	outputSize{ outputSize_ },
 	rng{ dev() }{
-	if (layerCount <= 1)
+	if (layerCount < 2)
 		throw exception("Need at least 2 layers");
 }
 
@@ -23,12 +23,14 @@ void NeuralNet::CreateRandom(){
 	vector<bitset<9>> layers;
 
 	auto layer = CreateRandomLayer(inputSize, layerCount == 2 ? outputSize : hiddenSize);
-	layers.insert(layers.end(), layer.begin(), layer.end());
+	layers.insert(layers.begin(), layer.begin(), layer.end());
 
-	for (int i = 1; i + 1 < layerCount; i++){
-		auto layer = CreateRandomLayer(hiddenSize, i + 1 == layerCount - 1 ? outputSize : hiddenSize);
+	for (int i = 1; i + 2 < layerCount; i++){
+		auto layer = CreateRandomLayer(hiddenSize, hiddenSize);
 		layers.insert(layers.end(), layer.begin(), layer.end());
 	}
+	layer = CreateRandomLayer(layerCount == 2 ? inputSize : hiddenSize, outputSize);
+	layers.insert(layers.end(), layer.begin(), layer.end());
 	CreateByEncoding(layers);
 }
 
@@ -54,12 +56,12 @@ void NeuralNet::CreateByEncoding(vector<bitset<9>>& encoding){
 			curr->SetNext(next);
 			next->SetPrev(curr);
 		}
+		iter += (srcSize * destSize);
 		curr = next;
 	}
 	output = new Layer(outputSize);
 	curr->SetNext(output);
 	output->SetPrev(curr);
-
 }
 
 vector<double> NeuralNet::Simulate(std::vector<double>& inputValues){
@@ -75,7 +77,6 @@ vector<bitset<9>> NeuralNet::Encode() const{
 
 	for (auto layer = input; layer->GetNext() != nullptr; layer = layer->GetNext()){
 		auto layerEncoding = layer->Encode();
-		cout << "got " << layerEncoding.size() << " links" << endl;
 		bits.insert(bits.end(), layerEncoding.begin(), layerEncoding.end());	//TODO maybe make with move
 	}
 	return bits;

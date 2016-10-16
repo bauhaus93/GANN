@@ -16,7 +16,6 @@ Layer::Layer(int nodeCount_) :
 Layer::Layer(int nodeCount_, int nextNodeCount, std::vector<std::bitset<9>> layerEncoding) :
 	Layer{ nodeCount_ }{
 
-	//cout << nodeCount << " -> " << nextNodeCount << endl;
 	int srcPos = 0;
 	int destPos = 0;
 	for(auto block : layerEncoding){

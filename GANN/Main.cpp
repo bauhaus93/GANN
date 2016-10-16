@@ -23,9 +23,6 @@ int main(int argc, char **argv){
 
 	TestIdempotence();
 
-
-
-
 	return 0;
 }
 
@@ -33,8 +30,9 @@ static void TestIdempotence(void){
 	NeuralNet n(4, 4, 2, 1);
 	NeuralNet n2(4, 4, 2, 1);
 	vector<double> input{ 1.2, 2.3 };
+	int mismatches = 0;
 
-	cout << "test idempotence:" << endl;
+	cout << "test idempotence" << endl;
 
 	n.CreateRandom();
 	n2.CreateByEncoding(n.Encode());
@@ -49,9 +47,13 @@ static void TestIdempotence(void){
 		for (int i = 0; i < encode.size(); i++){
 			if (encode.at(i) != encode2.at(i)){
 				cout << "mismatch at row " << i << ": " << encode.at(i) << " / " << encode2.at(i) << endl;
+				mismatches++;
 			}
+
 		}
 	}
+	cout << mismatches << " mismatches" << endl;
+
 }
 
 static void PrintVector(vector<double>& vec, string title){
