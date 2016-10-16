@@ -28,7 +28,7 @@ private:
 
 public:
 									Layer(int nodeCount_);
-									Layer(int nodeCount_, int nextNodeCount, std::vector<std::bitset<9>> layerEncoding);
+									Layer(int nodeCount_, std::vector<std::bitset<9>> layerEncoding);
 									~Layer();
 	int								GetNodeCount() const;
 	const std::vector<Connection>&	GetConnections() const;

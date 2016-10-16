@@ -13,7 +13,7 @@ Layer::Layer(int nodeCount_) :
 
 }
 
-Layer::Layer(int nodeCount_, int nextNodeCount, std::vector<std::bitset<9>> layerEncoding) :
+Layer::Layer(int nodeCount_, std::vector<std::bitset<9>> layerEncoding) :
 	Layer{ nodeCount_ }{
 
 	int srcPos = 0;
@@ -24,7 +24,7 @@ Layer::Layer(int nodeCount_, int nextNodeCount, std::vector<std::bitset<9>> laye
 		int8_t weight = static_cast<int8_t>(block.to_ulong());
 		connections.emplace_back(srcPos, destPos, active, weight);
 		destPos++;
-		if (destPos >= nextNodeCount){
+		if (destPos >= nodeCount){
 			destPos = 0;
 			srcPos++;
 		}
@@ -72,8 +72,9 @@ void Layer::Simulate(vector<double>& input){
 }
 
 void Layer::ClearNodeSums(){
+	//if(nodeValues.size() > 0)
 	fill(nodeValues.begin(), nodeValues.end(), 0);
-	if (next)
+	if (next != nullptr)
 		next->ClearNodeSums();
 }
 

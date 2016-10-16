@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "NeuralNet.h"
+#include "Genetic.h"
 #include "Tests.h"
 
 using namespace std;
@@ -14,18 +15,23 @@ extern bool RunTests(void);
 int main(int argc, char **argv){
 	RunTests();
 
-	/*NeuralNet n(4, 4, 2, 1);
-	vector<double> input{ 1.2, 2.3 };
-	vector<double> output;
+	Genetic g(16, 0.1);
+	g.Run(1000);
 
+	auto code = g.GetFittest();
 
-	n.CreateRandom();
-	output = n.Simulate(input);
+	NeuralNet n(4, 4);
+	vector<double> input{ 3, 7, 0, 0 }, output;
 
-	PrintVector(input, "input: ");
-	PrintVector(output, "output: ");*/
-
-
+	n.CreateByEncoding(code);
+	for (int i = 0; i < 10; i++){
+		for (int j = 0; j < 10; j++){
+			input.at(0) = i;
+			input.at(1) = j;
+			output = n.Simulate(input);
+			cout << i << " * " << j << " = " << output.at(0) << endl;
+		}
+	}
 	return 0;
 }
 

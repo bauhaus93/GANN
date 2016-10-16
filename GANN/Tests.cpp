@@ -2,7 +2,7 @@
 
 using namespace std;
 
-static int TestIdempotence(int layerCount, int hiddenSize, int inputSize, int outputSize);
+static int TestIdempotence(int layerCount, int layerSize);
 static int TestCreateLayerCountOne(void);
 
 bool RunTests(void){
@@ -14,20 +14,16 @@ bool RunTests(void){
 		failed++;
 
 	cout << "test idempotence..." << endl;
-	for (int i = 2; i < 5; i++){
+	for (int i = 2; i < 10; i++){
 		for (int j = 1; j < 10; j++){
-			for (int k = 1; k < 10; k++){
-				for (int l = 1; l < 10; l++){
-					if (TestIdempotence(i, j, k, l) != 0)
-						failed++;
-				}
-			}
+			if (TestIdempotence(i, j) != 0)
+				failed++;
 		}
 	}
 
 
 	if (failed > 0){
-		cout << failed << "tests failed" << endl;
+		cout << failed << " tests failed" << endl;
 	}
 	else
 		cout << "all tests sucessful" << endl;
@@ -38,7 +34,7 @@ static int TestCreateLayerCountOne(void){
 	cout << "test layer count one creation..." << endl;
 
 	try{
-		NeuralNet n(1, 2, 2, 2);
+		NeuralNet n(1, 4);
 		cout << "no exception thrown with layer count one!" << endl;
 		return 1;
 
@@ -50,9 +46,9 @@ static int TestCreateLayerCountOne(void){
 }
 
 
-static int TestIdempotence(int layerCount, int hiddenSize, int inputSize, int outputSize){
-	NeuralNet n(layerCount, hiddenSize, inputSize, outputSize);
-	NeuralNet n2(layerCount, hiddenSize, inputSize, outputSize);
+static int TestIdempotence(int layerCount, int layerSize){
+	NeuralNet n(layerCount, layerSize);
+	NeuralNet n2(layerCount, layerSize);
 	vector<double> input{ 1.2, 2.3 };
 	int mismatches = 0;
 
