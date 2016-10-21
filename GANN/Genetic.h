@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "NeuralNet.h"
-
+/*
 //TODO save population as encoded bitstring with its fitness value
 class Genetic{
 
@@ -30,5 +30,5 @@ public:
 	void Mutate(std::vector<std::bitset<9>>& individual, int flips);
 	std::vector<std::bitset<9>> GetFittest(void);
 	void PrintPopulation(void);
-};
+};*/
 

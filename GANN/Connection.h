@@ -6,19 +6,15 @@
 class Connection{
 
 private:
-	bool active;
-	int srcPos;
-	int destPos;
-	int8_t weight;
+	int dest;
+	double weight;
 
 public:
-				Connection(int srcPos, int destPos, bool active_, int8_t weight_);
+				Connection(int dest_, double weight_);
 				~Connection();
 
-	int			GetSrc() const;
 	int			GetDest() const;
-	int8_t		GetWeight() const;
-	bool		IsActive() const;
+	double		GetWeight() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Connection& conn);

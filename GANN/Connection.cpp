@@ -2,33 +2,23 @@
 
 using namespace std;
 
-Connection::Connection(int srcPos_, int destPos_, bool active_, int8_t weight_) :
-	active{ active_ },
-	srcPos{ srcPos_ },
-	destPos{ destPos_ },
+Connection::Connection(int dest_, double weight_) :
+	dest{ dest_ },
 	weight{ weight_ }{
 }
 
 Connection::~Connection(){
 }
 
-int Connection::GetSrc() const{
-	return srcPos;
-}
-
 int Connection::GetDest() const{
-	return destPos;
+	return dest;
 }
 
-int8_t Connection::GetWeight() const{
+double Connection::GetWeight() const{
 	return weight;
 }
 
-bool Connection::IsActive() const{
-	return active;
-}
-
 ostream& operator<<(ostream& os, const Connection& conn){
-	os << "\tconnect " << conn.GetSrc() << " with " << conn.GetDest() << ", weight = " << static_cast<int>(conn.GetWeight()) << endl;
+	os << "\tconnect " << conn.GetDest() << ", weight = " << conn.GetWeight() << endl;
 	return os;
 }

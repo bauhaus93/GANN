@@ -2,7 +2,7 @@
 
 using namespace std;
 
-bool Fitness(pair<double, NeuralNet> const& a, pair<double, NeuralNet> const& b);
+/*bool Fitness(pair<double, NeuralNet> const& a, pair<double, NeuralNet> const& b);
 double GetScore(NeuralNet& net);
 
 Genetic::Genetic(int populationSize, double mutationChance_) :
@@ -37,7 +37,7 @@ void Genetic::RunOnce(){
 
 	auto child = Crossover(parentA, parentB);
 	if (rng() % 100 / 100 < mutationChance)
-		Mutate(child, 10);
+		Mutate(child, 20);
 
 	NeuralNet n(4, 4);
 	n.CreateByEncoding(child);
@@ -102,8 +102,6 @@ std::vector<std::bitset<9>> Genetic::GetFittest(void){
 }
 
 void Genetic::PrintPopulation(void){
-	vector<double> input{ 1.0, 1.0 };
-	vector<double> output;
 
 	cout << "network outputs:" << endl;
 	for (auto& p : population){
@@ -139,4 +137,4 @@ double GetScore(NeuralNet& net){
 		}
 	}
 	return score;
-}
+}*/

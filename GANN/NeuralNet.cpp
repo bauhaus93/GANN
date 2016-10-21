@@ -3,120 +3,138 @@
 using namespace std;
 
 NeuralNet::NeuralNet(int layerCount_, int layerSize_) :
-	input{ nullptr },
-	output{ nullptr },
 	layerCount{ layerCount_ },
 	layerSize{ layerSize_ },
 	rng{ dev() }{
-	if (layerCount < 2)
-		throw exception("Need at least 2 layers");
 }
 
 NeuralNet::NeuralNet(NeuralNet&& other){
-	input = other.input;
-	output = other.output;
-	layerCount = other.layerCount;
-	layerSize = other.layerSize;
 
-	other.input = nullptr;
-	other.output = nullptr;
 }
 
 NeuralNet& NeuralNet::operator=(NeuralNet&& other){
 	if (this != &other){
-		input = other.input;
-		output = other.output;
-		layerCount = other.layerCount;
-		layerSize = other.layerSize;
 
-		other.input = nullptr;
-		other.output = nullptr;
 	}
 	return *this;
 }
 
 
 NeuralNet::~NeuralNet(){
-	if (input != nullptr)
-		delete input;
+
 }
 
 void NeuralNet::CreateRandom(){
-	vector<bitset<9>> layers;
+	vector<bool> layers;
 
-	auto layer = CreateRandomLayer(layerSize);
-	layers.insert(layers.begin(), layer.begin(), layer.end());
-
-	for (int i = 1; i + 2 < layerCount; i++){
-		auto layer = CreateRandomLayer(layerSize);
+	for (int i = 0; i < layerCount; i++){
+		auto layer = CreateRandomLayer();
 		layers.insert(layers.end(), layer.begin(), layer.end());
 	}
-	layer = CreateRandomLayer(layerSize);
-	layers.insert(layers.end(), layer.begin(), layer.end());
+
 	CreateByEncoding(layers);
 }
 
-void NeuralNet::CreateByEncoding(vector<bitset<9>>& encoding){
+void NeuralNet::CreateByEncoding(vector<bool>& encoding){
+	int pos = 0;
 
-	auto iter = encoding.begin();
-	Layer* curr = nullptr;
-
-	for (int i = 0; i + 1 < layerCount; i++){
-
-		vector<bitset<9>> layerEncoding(iter, iter + (layerSize*layerSize));
-
-		auto next = new Layer(layerSize, layerEncoding);
-		if (input == nullptr){
-			input = next;
-		}
-		else{
-			curr->SetNext(next);
-			next->SetPrev(curr);
-		}
-		iter += (layerSize*layerSize);
-		curr = next;
+	for (int i = 0; i < layerCount; i++){
+		pos = DecodeLayer(encoding, pos);
 	}
-	output = new Layer(layerSize);
-	curr->SetNext(output);
-	output->SetPrev(curr);
 }
 
 vector<double> NeuralNet::Simulate(std::vector<double>& inputValues){
-	vector<double> out;
 
 	if (inputValues.size() < layerSize)
 		throw exception("Too less input values given!");
 
-	input->ClearNodeSums();
-	input->Simulate(inputValues);
-	return output->GetNodeValues();
 }
 
-std::vector<double> NeuralNet::GetLastOutput() const{
-	return output->GetNodeValues();
-}
 
 //TODO make not a vector of bitsets but one bitset, so that the bitset can be split at any pos -> problem bitset fixed length (->vector<bool>?)
-vector<bitset<9>> NeuralNet::Encode() const{
-	vector<bitset<9>> bits;
-
-	for (auto layer = input; layer->GetNext() != nullptr; layer = layer->GetNext()){
-		auto layerEncoding = layer->Encode();
-		bits.insert(bits.end(), layerEncoding.begin(), layerEncoding.end());	//TODO maybe make with move
-	}
-	return bits;
+vector<bool> NeuralNet::Encode() const{
+	vector<bool> encoding;
+	return encoding;
 }
 
 
-vector<bitset<9>> NeuralNet::CreateRandomLayer(int layerSize){
-	vector<bitset<9>> connections;
+vector<bool> NeuralNet::CreateRandomLayer(void){
+	vector<bool> encoding;
+	uniform_real_distribution<double> rnDb(-10, 10);
 
-	for (int i = 0; i < layerSize * layerSize; i++){
-		bitset<9> connection((rng() % 256) - 128);
-		connection.set(8, true);
-		connections.push_back(connection);
+	for (int i = 0; i < layerSize; i++){
+		double bias = rnDb(dev);
+		auto biasVec = DoubleToBoolVector(bias);
+		encoding.insert(encoding.end(), biasVec.begin(), biasVec.end());
+
+		for (int j = 0; j < layerSize; j++){
+			bool active = true;
+			double weight = rnDb(dev);
+			auto weightVec = DoubleToBoolVector(weight);
+
+			encoding.push_back(active);
+			encoding.insert(encoding.end(), weightVec.begin(), weightVec.end());
+		}
 	}
-	return connections;
+
+	return encoding;
+}
+
+int NeuralNet::DecodeLayer(vector<bool>& encoding, int start){
+	int pos = start;
+	constexpr int connSize = 1 + sizeof(double);
+
+	const Layer* pred = layers.size() == 0 ? nullptr : &layers.front();
+	layers.emplace_back();
+	Layer& curr = layers.back();
+
+	for (int i = 0; i < layerSize; i++){	//for each node
+
+		if (pred != nullptr && !pred->ConnectsWithNode(i)){
+			pos += sizeof(double) + layerSize * connSize;
+			continue;
+		}
+
+		double bias = BoolVectorToDouble(encoding, pos, pos + sizeof(double));
+		curr.AddNode(bias);
+		pos += sizeof(double);
+
+		for (int j = 0; j < layerSize; j++){	//for each node in next layer (=connection)
+			bool active = encoding.at(pos);
+			if (active){
+				double weight = BoolVectorToDouble(encoding, pos + 1, pos + connSize);
+				curr[i].AddConnection(j, weight);
+			}
+			pos += connSize;
+		}
+	}
+	return pos;
+}
+
+vector<bool> DoubleToBoolVector(double value){
+	union{ uint64_t u; double d; } converter;
+	vector<bool> result;
+
+	converter.d = value;
+
+	while (converter.u != 0){
+		result.insert(result.begin(), (converter.u & 1));
+		converter.u >>= 1;
+	}
+
+	return result;
+}
+
+double BoolVectorToDouble(vector<bool>& vec, int from, int to){
+	union{ uint64_t u; double d; } converter;
+	converter.u = 0;
+
+	for (int i = from; i < to; i++){
+		converter.u |= vec.at(i);
+		if (i + 1 < vec.size())
+			converter.u <<= 1;
+	}
+	return converter.d;
 }
 
 

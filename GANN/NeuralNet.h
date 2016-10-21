@@ -8,19 +8,21 @@
 
 #include "Layer.h"
 
-
+std::vector<bool> DoubleToBoolVector(double value);
+double BoolVectorToDouble(std::vector<bool>& vec, int from, int to);
 
 class NeuralNet{
 
-	Layer* input;
-	Layer* output;
+	std::vector<Layer> layers;
 	int layerCount;
 	int layerSize;
 
 	std::random_device dev;
 	std::mt19937 rng;
 
-	std::vector<std::bitset<9>>	CreateRandomLayer(int layerSize);
+	std::vector<bool>			CreateRandomLayer(void);
+	int							DecodeLayer(std::vector<bool>& encoding, int start);
+
 
 public:
 
@@ -30,10 +32,11 @@ public:
 	NeuralNet&					operator=(NeuralNet&& other);
 								~NeuralNet();
 	void						CreateRandom();
-	void						CreateByEncoding(std::vector<std::bitset<9>>& encoding);
+	void						CreateByEncoding(std::vector<bool>& encoding);
 	std::vector<double>			Simulate(std::vector<double>& inputValues);
-	std::vector<double>			GetLastOutput() const;
-	std::vector<std::bitset<9>>	Encode() const;
+	std::vector<bool>			Encode() const;
+
+	
 	
 };
 
