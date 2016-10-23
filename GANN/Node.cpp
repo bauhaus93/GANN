@@ -19,9 +19,18 @@ void Node::AddConnection(int targetIndex, double weight){
 	connections.emplace_back(targetIndex, weight);
 }
 
+void Node::DeleteConnection(int index){
+	connections.erase(connections.begin() + index);
+}
+
+int Node::GetConnectionCount() const{
+	return connections.size();
+}
+
 void Node::Clear(void){
 	value = 0;
 }
+
 
 double Node::GetOutput(void){
 	return 1 / (1 + exp(-value));
@@ -33,6 +42,14 @@ bool Node::ConnectsWithNode(int index) const{
 			return true;
 	}
 	return false;
+}
+
+void Node::FlushConnections(){
+	connections.clear();
+}
+
+Connection& Node::operator[](int index){
+	return connections.at(index);
 }
 
 std::ostream& operator<<(std::ostream& os, const Node& node){

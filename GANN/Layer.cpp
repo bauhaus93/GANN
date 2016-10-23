@@ -2,8 +2,6 @@
 
 using namespace std;
 
-
-
 Layer::Layer():
 	nodes{}{
 
@@ -34,6 +32,10 @@ void Layer::AddNode(double bias){
 	nodes.emplace_back(bias);
 }
 
+void Layer::FlushConnections(){
+	for (auto& node : nodes)
+		node.FlushConnections();
+}
 
 Node& Layer::operator[](int index){
 	return nodes.at(index);

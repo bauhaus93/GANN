@@ -24,6 +24,7 @@ public:
 	void					ClearNodeValues();
 	bool					ConnectsWithNode(int index) const;
 	void					AddNode(double bias);
+	void					FlushConnections();
 
 	Node&					operator[](int index);
 

@@ -24,13 +24,16 @@
     <ClInclude Include="Layer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="Tests.h">
-      <Filter>Quelldateien</Filter>
-    </ClInclude>
     <ClInclude Include="Genetic.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Node.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Tests.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
@@ -54,6 +57,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="Node.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Drawer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

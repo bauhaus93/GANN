@@ -6,8 +6,8 @@
 class Connection{
 
 private:
-	int dest;
-	double weight;
+	int			dest;
+	double		weight;
 
 public:
 							Connection(int dest_, double weight_);

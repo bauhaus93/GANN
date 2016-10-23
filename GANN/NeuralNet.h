@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <map>
+#include <utility>
 #include <vector>
 #include <random>
 #include <iostream>
@@ -8,9 +10,8 @@
 
 #include "Layer.h"
 
-std::vector<bool> DoubleToBoolVector(double value);
-double BoolVectorToDouble(std::vector<bool>& vec, int from, int to);
-std::vector<bool> DoubleToBoolVector(double value);
+static std::vector<bool> DoubleToBoolVector(double value);
+static double BoolVectorToDouble(std::vector<bool>& vec, int from, int to);
 
 class NeuralNet{
 
@@ -23,6 +24,9 @@ class NeuralNet{
 
 	std::vector<bool>			CreateRandomLayer(void);
 	int							DecodeLayer(std::vector<bool>& encoding, int start);
+	void						ValidateNetwork();
+
+	bool						CheckNodeConnections(std::pair<int, int> from, std::pair<int, int> to);
 
 
 public:
@@ -38,9 +42,12 @@ public:
 	std::vector<bool>			Encode() const;
 	int							GetLayerCount() const;
 	int							GetLayerSize() const;
-	const std::vector<Layer>&	GetLayers() const;
+	Layer&						operator[](int index);
+	Node&						operator[](std::pair<int, int> index);
+
+	friend std::ostream&		operator<<(std::ostream& os, const NeuralNet& net);
 	
 };
 
-std::ostream& operator<<(std::ostream& os, const NeuralNet& net);
+
 

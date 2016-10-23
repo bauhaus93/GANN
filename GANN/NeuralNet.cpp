@@ -19,7 +19,6 @@ NeuralNet& NeuralNet::operator=(NeuralNet&& other){
 	return *this;
 }
 
-
 NeuralNet::~NeuralNet(){
 
 }
@@ -41,6 +40,7 @@ void NeuralNet::CreateByEncoding(vector<bool>& encoding){
 	for (int i = 0; i < layerCount; i++){
 		pos = DecodeLayer(encoding, pos);
 	}
+	ValidateNetwork();
 }
 
 vector<double> NeuralNet::Simulate(std::vector<double>& inputValues){
@@ -65,10 +65,13 @@ int NeuralNet::GetLayerSize() const{
 	return layerSize;
 }
 
-const std::vector<Layer>& NeuralNet::GetLayers() const{
-	return layers;
+Layer& NeuralNet::operator[](int index){
+	return layers.at(index);
 }
 
+Node & NeuralNet::operator[](std::pair<int, int> index){
+	return layers.at(index.first)[index.second];
+}
 
 vector<bool> NeuralNet::CreateRandomLayer(void){
 	vector<bool> encoding;
@@ -80,7 +83,7 @@ vector<bool> NeuralNet::CreateRandomLayer(void){
 		encoding.insert(encoding.end(), biasVec.begin(), biasVec.end());
 
 		for (int j = 0; j < layerSize; j++){
-			bool active = true;
+			bool active = true && rng() % 100 < 50 ? false : true;
 			double weight = rnDb(dev);
 			auto weightVec = DoubleToBoolVector(weight);
 
@@ -96,6 +99,7 @@ int NeuralNet::DecodeLayer(vector<bool>& encoding, int start){
 	int pos = start;
 	constexpr int connSize = 1 + 8 * sizeof(double);
 
+	//TODO rearrange node connection destinations in prev layer if in curr layer a node gets deleted!
 	layers.emplace_back();
 	Layer& curr = layers.back();
 
@@ -119,13 +123,31 @@ int NeuralNet::DecodeLayer(vector<bool>& encoding, int start){
 					curr[i].AddConnection(j, weight);
 				}
 				catch (out_of_range& e){
-					cout << e.what() << endl;
+					//cout << e.what() << endl;
 				}
 			}
 			pos += connSize;
 		}
 	}
 	return pos;
+}
+
+void NeuralNet::ValidateNetwork(){
+	map<pair<int, int>, bool> hasThroughput;
+
+	for (int i = 0; i < layerCount; i++){
+		for (int j = 0; j < layerSize; j++){
+			auto index = make_pair(i, j);
+			hasThroughput.emplace(index, false);
+		}
+	}
+}
+
+bool NeuralNet::CheckNodeConnections(pair<int, int> from, pair<int, int> to){
+	auto pos = from;
+	
+	return true;
+
 }
 
 vector<bool> DoubleToBoolVector(double value){
@@ -142,8 +164,6 @@ vector<bool> DoubleToBoolVector(double value){
 	return result;
 }
 
-
-
 double BoolVectorToDouble(vector<bool>& vec, int from, int to){
 	union{ uint64_t u; double d; } converter;
 	converter.u = 0;
@@ -156,11 +176,10 @@ double BoolVectorToDouble(vector<bool>& vec, int from, int to){
 	return converter.d;
 }
 
-std::ostream & operator<<(std::ostream& os, const NeuralNet& net){
+std::ostream& operator<<(std::ostream& os, const NeuralNet& net){
 	os << "neural net: " << net.GetLayerCount() << " layers, " << net.GetLayerSize() << " max nodes per layer" << endl;
-	for (const auto& layer : net.GetLayers()){
+	for (auto& layer : net.layers)
 		os << layer;
-	}
 	return os;
 }
 
