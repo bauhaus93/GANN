@@ -2,9 +2,15 @@
 
 using namespace std;
 
-Layer::Layer():
-	nodes{}{
+std::vector<std::unique_ptr<Node>>& Layer::GetNodes(){
+	return nodes;
+}
 
+Layer::Layer(int nodeCount){
+
+	for (int i = 0; i < nodeCount; i++){
+		nodes.emplace_back();
+	}
 }
 
 Layer::~Layer(){
@@ -16,35 +22,37 @@ int Layer::GetNodeCount() const{
 
 void Layer::ClearNodeValues(){
 	for (auto& node : nodes){
-		node.Clear();
+		node->Clear();
 	}
 }
 
-bool Layer::ConnectsWithNode(int index) const{
+
+int Layer::Decode(std::vector<bool>& encoding, int start, Layer& next){
+	int pos = start;
+
 	for (auto& node : nodes){
-		if (node.ConnectsWithNode(index))
-			return true;
+		pos = node->Decode(encoding, pos, next.GetNodes());
 	}
-	return false;
+	return pos;
 }
 
-void Layer::AddNode(double bias){
-	nodes.emplace_back(bias);
-}
+int Layer::Decode(std::vector<bool>& encoding, int start){
+	int pos = start;
 
-void Layer::FlushConnections(){
-	for (auto& node : nodes)
-		node.FlushConnections();
+	for (auto& node : nodes){
+		pos = node->Decode(encoding, pos, nodes.size());
+	}
+	return pos;
 }
 
 Node& Layer::operator[](int index){
-	return nodes.at(index);
+	return *nodes.at(index);
 }
 
 std::ostream& operator<<(std::ostream& os, const Layer& layer){
 	os << "  layer node count: " << layer.nodes.size() << endl;
 	for (const auto& node : layer.nodes){
-		os << "  " << node;
+		os << "  " << "i'm a node";
 	}
 	return os;
 }

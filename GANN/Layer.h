@@ -2,12 +2,8 @@
 
 #include <memory>
 #include <vector>
-#include <sstream>
-
-#include <bitset>
 #include <algorithm>
 
-#include "Connection.h"
 #include "Node.h"
 
 
@@ -15,16 +11,17 @@ class Layer{
 
 private:
 
-	std::vector<Node>		nodes;
+	std::vector<std::unique_ptr<Node>>	nodes;
+
+	std::vector<std::unique_ptr<Node>>& GetNodes();
 
 public:
-							Layer();
+							Layer(int nodeCount);
 							~Layer();
 	int						GetNodeCount() const;
 	void					ClearNodeValues();
-	bool					ConnectsWithNode(int index) const;
-	void					AddNode(double bias);
-	void					FlushConnections();
+	int						Decode(std::vector<bool>& encoding, int start, Layer& next);
+	int						Decode(std::vector<bool>& encoding, int start);
 
 	Node&					operator[](int index);
 

@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Connection.h" />
     <ClInclude Include="Drawer.h" />
     <ClInclude Include="Genetic.h" />
     <ClInclude Include="Layer.h" />
@@ -28,7 +27,6 @@
     <ClInclude Include="Tests.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Connection.cpp" />
     <ClCompile Include="Drawer.cpp" />
     <ClCompile Include="Genetic.cpp" />
     <ClCompile Include="Layer.cpp" />

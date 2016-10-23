@@ -6,6 +6,12 @@ NeuralNet::NeuralNet(int layerCount_, int layerSize_) :
 	layerCount{ layerCount_ },
 	layerSize{ layerSize_ },
 	rng{ dev() }{
+
+	for (int i = 0; i < layerCount; i++){
+		layers.emplace_back(layerSize);
+	}
+
+
 }
 
 /*NeuralNet::NeuralNet(NeuralNet&& other){
@@ -31,17 +37,9 @@ void NeuralNet::CreateRandom(){
 		layers.insert(layers.end(), layer.begin(), layer.end());
 	}
 
-	CreateByEncoding(layers);
+	Decode(layers);
 }
 
-void NeuralNet::CreateByEncoding(vector<bool>& encoding){
-	int pos = 0;
-
-	for (int i = 0; i < layerCount; i++){
-		pos = DecodeLayer(encoding, pos);
-	}
-	ValidateNetwork();
-}
 
 vector<double> NeuralNet::Simulate(std::vector<double>& inputValues){
 
@@ -55,6 +53,19 @@ vector<double> NeuralNet::Simulate(std::vector<double>& inputValues){
 vector<bool> NeuralNet::Encode() const{
 	vector<bool> encoding;
 	return encoding;
+}
+
+void NeuralNet::Decode(std::vector<bool>& encoding){
+	int pos = 0;
+
+	for (int i = 0; i + 1 < layerCount; i++){
+		pos = layers.at(i).Decode(encoding, pos, layers.at(i + 1));
+	}
+
+	pos = layers.back().Decode(encoding, pos);
+
+	if (pos != encoding.size())
+		throw;
 }
 
 int NeuralNet::GetLayerCount() const{
@@ -93,87 +104,6 @@ vector<bool> NeuralNet::CreateRandomLayer(void){
 	}
 
 	return encoding;
-}
-
-int NeuralNet::DecodeLayer(vector<bool>& encoding, int start){
-	int pos = start;
-	constexpr int connSize = 1 + 8 * sizeof(double);
-
-	//TODO rearrange node connection destinations in prev layer if in curr layer a node gets deleted!
-	layers.emplace_back();
-	Layer& curr = layers.back();
-
-	for (int i = 0; i < layerSize; i++){	//for each node
-
-		if (layers.size() > 1 && !layers.at(layers.size() - 2).ConnectsWithNode(i)){
-			pos += 8 * sizeof(double) + layerSize * connSize;
-			continue;
-		}
-
-		double bias = BoolVectorToDouble(encoding, pos, pos + 8 * sizeof(double));
-		curr.AddNode(bias);
-		pos += 8 * sizeof(double);
-
-		for (int j = 0; j < layerSize; j++){	//for each node in next layer (=connection)
-			bool active = encoding.at(pos);
-
-			if (active){
-				double weight = BoolVectorToDouble(encoding, pos + 1, pos + connSize);
-				try{
-					curr[i].AddConnection(j, weight);
-				}
-				catch (out_of_range& e){
-					//cout << e.what() << endl;
-				}
-			}
-			pos += connSize;
-		}
-	}
-	return pos;
-}
-
-void NeuralNet::ValidateNetwork(){
-	map<pair<int, int>, bool> hasThroughput;
-
-	for (int i = 0; i < layerCount; i++){
-		for (int j = 0; j < layerSize; j++){
-			auto index = make_pair(i, j);
-			hasThroughput.emplace(index, false);
-		}
-	}
-}
-
-bool NeuralNet::CheckNodeConnections(pair<int, int> from, pair<int, int> to){
-	auto pos = from;
-	
-	return true;
-
-}
-
-vector<bool> DoubleToBoolVector(double value){
-	union{ uint64_t u; double d; } converter;
-	vector<bool> result;
-
-	converter.d = value;
-
-	while (result.size() < 8 * sizeof(double)){
-		result.insert(result.begin(), (converter.u & 1));
-		converter.u >>= 1;
-	}
-
-	return result;
-}
-
-double BoolVectorToDouble(vector<bool>& vec, int from, int to){
-	union{ uint64_t u; double d; } converter;
-	converter.u = 0;
-
-	for (int i = from; i < to; i++){
-		converter.u |= vec.at(i);
-		if (i + 1 < to)
-			converter.u <<= 1;
-	}
-	return converter.d;
 }
 
 std::ostream& operator<<(std::ostream& os, const NeuralNet& net){

@@ -14,7 +14,6 @@ extern bool RunTests(void);
 
 
 int main(int argc, char **argv){
-	
 
 	NeuralNet nn(8, 4);
 	nn.CreateRandom();
@@ -24,14 +23,14 @@ int main(int argc, char **argv){
 
 	Drawer d(1024, 768);
 	DrawNetwork(d, nn, 100, 100, 500, 500);
-	d.Wait(15);
+	system("Pause");
 
 	return 0;
 }
 
 void DrawNetwork(Drawer& drawer, NeuralNet& net, int startX, int startY, int width, int height){
 
-	float rectX = width / net.GetLayerCount();
+/*	float rectX = width / net.GetLayerCount();
 	float rectY = height / net.GetLayerSize();
 	float circleSize = min(rectX, rectY) * 0.3;
 
@@ -45,9 +44,13 @@ void DrawNetwork(Drawer& drawer, NeuralNet& net, int startX, int startY, int wid
 			int x = startX + i * rectX + rectX / 2;
 			int y = startY + j * rectY + rectY / 2;
 
-			drawer.SetColor(0xFF, 0, 0);
+			
 			for (int k = 0; k < node.GetConnectionCount(); k++){
 				auto& conn = node[k];
+				if (conn.GetWeight() < 0 || true)
+					drawer.SetColor(0xFF, 0, 0);
+				else
+					drawer.SetColor(0, 0xFF, 0);
 				drawer.Line(x, y, x + rectX, startY + conn.GetDest() * rectY + rectY / 2);
 			}
 
@@ -57,7 +60,7 @@ void DrawNetwork(Drawer& drawer, NeuralNet& net, int startX, int startY, int wid
 		}
 	}
 	drawer.Rect(startX, startY, width, height);
-	drawer.Flip();
+	drawer.Flip();*/
 
 }
 

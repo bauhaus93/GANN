@@ -53,7 +53,6 @@ static int TestIdempotence(int layerCount, int layerSize){
 	int mismatches = 0;
 
 	n.CreateRandom();
-	n2.CreateByEncoding(n.Encode());
 
 	auto encode = n.Encode();
 	auto encode2 = n2.Encode();
