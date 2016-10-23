@@ -18,15 +18,16 @@ private:
 	std::vector<Node>		nodes;
 
 public:
-						Layer();
-						~Layer();
-	int					GetNodeCount() const;
-	void				ClearNodeValues();
-	bool				ConnectsWithNode(int index) const;
-	void				AddNode(double bias);
+							Layer();
+							~Layer();
+	int						GetNodeCount() const;
+	void					ClearNodeValues();
+	bool					ConnectsWithNode(int index) const;
+	void					AddNode(double bias);
 
-	Node&				operator[](int index);
+	Node&					operator[](int index);
+
+	friend std::ostream&	operator<<(std::ostream& os, const Layer& layer);
 
 };
 
-std::ostream& operator<<(std::ostream& os, const Layer& layer);

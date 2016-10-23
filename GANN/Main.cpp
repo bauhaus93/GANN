@@ -11,12 +11,16 @@ using namespace std;
 static void PrintVector(vector<double>& vec, string title);
 
 extern bool RunTests(void);
+extern double BoolVectorToDouble(std::vector<bool>& vec, int from, int to);
+extern std::vector<bool> DoubleToBoolVector(double value);
 
 
 int main(int argc, char **argv){
-	NeuralNet nn(4, 4);
 
+	NeuralNet nn(4, 4);
 	nn.CreateRandom();
+
+	cout << nn << endl;
 
 	return 0;
 }

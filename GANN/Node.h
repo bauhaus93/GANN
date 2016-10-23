@@ -22,5 +22,7 @@ public:
 	void		Clear(void);
 	double		GetOutput(void);
 	bool		ConnectsWithNode(int index) const;
+
+	friend std::ostream&	operator<<(std::ostream& os, const Node& node);
 };
 

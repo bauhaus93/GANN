@@ -16,9 +16,6 @@ int Layer::GetNodeCount() const{
 	return nodes.size();
 }
 
-
-
-
 void Layer::ClearNodeValues(){
 	for (auto& node : nodes){
 		node.Clear();
@@ -37,26 +34,15 @@ void Layer::AddNode(double bias){
 	nodes.emplace_back(bias);
 }
 
+
 Node& Layer::operator[](int index){
 	return nodes.at(index);
 }
 
-
-ostream& operator<<(ostream& os, const Layer& layer){
-	os << "layer node count: " << layer.GetNodeCount() << endl;
-
-	os << "node values: ";
-	/*for (const auto nodeValue : layer.GetNodeValues()){
-		os << nodeValue << " ";
+std::ostream& operator<<(std::ostream& os, const Layer& layer){
+	os << "  layer node count: " << layer.nodes.size() << endl;
+	for (const auto& node : layer.nodes){
+		os << "  " << node;
 	}
-	os << endl;
-
-	for (const auto conn : layer.GetConnections()){
-		os << conn;
-	}
-	if (layer.GetNext() != nullptr){
-		os << *layer.GetNext();
-	}*/
 	return os;
 }
-

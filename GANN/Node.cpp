@@ -35,3 +35,10 @@ bool Node::ConnectsWithNode(int index) const{
 	return false;
 }
 
+std::ostream& operator<<(std::ostream& os, const Node& node){
+	os << "  node bias: " << node.bias << endl;
+	for (const auto& conn : node.connections){
+		os << "    " << conn;
+	}
+	return os;
+}

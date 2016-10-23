@@ -10,12 +10,12 @@ private:
 	double weight;
 
 public:
-				Connection(int dest_, double weight_);
-				~Connection();
+							Connection(int dest_, double weight_);
+							~Connection();
 
-	int			GetDest() const;
-	double		GetWeight() const;
+	int						GetDest() const;
+	double					GetWeight() const;
+	friend std::ostream&	operator<<(std::ostream& os, const Connection& conn);
 };
 
-std::ostream& operator<<(std::ostream& os, const Connection& conn);
 

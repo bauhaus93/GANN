@@ -19,6 +19,6 @@ double Connection::GetWeight() const{
 }
 
 ostream& operator<<(ostream& os, const Connection& conn){
-	os << "\tconnect " << conn.GetDest() << ", weight = " << conn.GetWeight() << endl;
+	os << "  connected with " << conn.dest << ", weight = " << conn.weight << endl;
 	return os;
 }
