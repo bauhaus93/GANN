@@ -25,6 +25,7 @@
     <ClInclude Include="NeuralNet.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Tests.h" />
+    <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Drawer.cpp" />
@@ -34,6 +35,7 @@
     <ClCompile Include="NeuralNet.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Tests.cpp" />
+    <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{59B21880-C018-4F6B-9C7B-D7107AB8CEF3}</ProjectGuid>

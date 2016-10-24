@@ -11,17 +11,18 @@ class Layer{
 
 private:
 
-	std::vector<std::unique_ptr<Node>>	nodes;
-
-	std::vector<std::unique_ptr<Node>>& GetNodes();
+	std::vector<Node*>	nodes;
 
 public:
 							Layer(int nodeCount);
 							~Layer();
+
+	void					MakeInput(std::vector<double>& input);
+	void					FeedForward();
 	int						GetNodeCount() const;
 	void					ClearNodeValues();
-	int						Decode(std::vector<bool>& encoding, int start, Layer& next);
-	int						Decode(std::vector<bool>& encoding, int start);
+	bool					HasConnections() const;
+	int						GetMaxDepth() const;
 
 	Node&					operator[](int index);
 

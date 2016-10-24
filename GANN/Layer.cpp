@@ -2,20 +2,39 @@
 
 using namespace std;
 
-std::vector<std::unique_ptr<Node>>& Layer::GetNodes(){
-	return nodes;
-}
+
 
 Layer::Layer(int nodeCount){
 
 	for (int i = 0; i < nodeCount; i++){
-		nodes.emplace_back();
+		Node *n = new Node(i);
+		nodes.push_back(n);
 	}
 }
 
 Layer::~Layer(){
-
+	while (!nodes.empty()){
+		delete nodes.back();
+		nodes.pop_back();
+	}
 }
+
+void Layer::MakeInput(std::vector<double>& input){
+	if (nodes.size() != input.size())
+		throw exception("input does not match input layer size");
+	for (int i = 0; i < nodes.size(); i++){
+		nodes.at(i)->SetValue(input.at(i));
+	}
+}
+
+void Layer::FeedForward(){
+	for (auto& node : nodes){
+		node->FeedForward();
+	}
+}
+
+
+
 int Layer::GetNodeCount() const{
 	return nodes.size();
 }
@@ -26,23 +45,22 @@ void Layer::ClearNodeValues(){
 	}
 }
 
-
-int Layer::Decode(std::vector<bool>& encoding, int start, Layer& next){
-	int pos = start;
-
+bool Layer::HasConnections() const{
 	for (auto& node : nodes){
-		pos = node->Decode(encoding, pos, next.GetNodes());
+		if (node->GetConnectionCount() > 0)
+			return true;
 	}
-	return pos;
+	return false;
 }
 
-int Layer::Decode(std::vector<bool>& encoding, int start){
-	int pos = start;
+int Layer::GetMaxDepth() const{
+	int currMax = 0;
 
 	for (auto& node : nodes){
-		pos = node->Decode(encoding, pos, nodes.size());
+		int depth = node->GetMaxDepth();
+		currMax = max(currMax, depth);
 	}
-	return pos;
+	return currMax;
 }
 
 Node& Layer::operator[](int index){
@@ -51,8 +69,7 @@ Node& Layer::operator[](int index){
 
 std::ostream& operator<<(std::ostream& os, const Layer& layer){
 	os << "  layer node count: " << layer.nodes.size() << endl;
-	for (const auto& node : layer.nodes){
-		os << "  " << "i'm a node";
-	}
+	for(int i = 0; i < layer.nodes.size(); i++)
+		os << "  " << *layer.nodes.at(i);
 	return os;
 }

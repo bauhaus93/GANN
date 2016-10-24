@@ -12,49 +12,73 @@ Node::Node(double bias_) :
 }
 
 Node::~Node(){
+	while (!connections.empty()){
+		delete connections.back();
+		connections.pop_back();
+	}
 }
 
 void Node::SetBias(double bias_){
 	bias = bias_;
 }
 
-void Node::Clear(void){
-	value = 0;
+void Node::SetValue(double value_){
+	value = value_;
 }
 
-double Node::GetOutput(void) const{
+void Node::ModValue(double input){
+	value += input;
+}
+
+double Node::GetValue() const{
+	return value;
+}
+
+void Node::AddConnection(bool active, Node & node, double weight){
+	auto conn = new Connection(active, node, weight);
+	connections.push_back(conn);
+}
+
+int Node::GetConnectionCount() const{
+	return connections.size();
+}
+
+void Node::Clear(void){
+	value = bias;
+}
+
+double Node::Activation() const{
 	return 1 / (1 + exp(-value));
 }
 
 Connection& Node::operator[](int index){
-	return connections.at(index);
+	return *connections.at(index);
 }
 
-int Node::Decode(std::vector<bool>& encoding, int start, vector<unique_ptr<Node>>& destNodes){
-	int pos = start;
-	double bias = BoolVectorToDouble(encoding, pos);
-	SetBias(bias);
-	pos += 8 * sizeof(double);
-	
-	for (auto& node : destNodes){
-		if (encoding.at(pos) == true){
-			double weight = BoolVectorToDouble(encoding, pos);
-			connections.emplace_back(*node, weight);
+int Node::GetMaxDepth() const{
+	int currMax = 0;
+
+	for (auto& conn : connections){
+		if (conn->IsActive()){
+			int depth = conn->GetDest().GetMaxDepth() + 1;
+			currMax = max(currMax, depth);
 		}
-		pos += 1 + 8 * sizeof(double);
 	}
-	return pos;
+	return currMax;
 }
 
-int Node::Decode(std::vector<bool>& encoding, int start, int layerSize){
-	int pos = start;
-	double bias = BoolVectorToDouble(encoding, pos);
-	SetBias(bias);
-	pos += 8 * sizeof(double);
-	return pos + layerSize * (1 + 8 * sizeof(double));
+void Node::FeedForward(){
+	double output = Activation();
+
+	for (auto& conn : connections){
+		if (conn->IsActive()){
+			conn->GetDest().ModValue(output * conn->GetWeight());
+		}
+	}
 }
 
-Connection::Connection(Node& dest_, double weight_) :
+Connection::Connection(bool active_, Node& dest_, double weight_) :
+	active{ active_ },
 	dest{ dest_ },
 	weight{ weight_ }{
 }
@@ -70,43 +94,21 @@ double Connection::GetWeight() const{
 	return weight;
 }
 
-ostream& operator<<(ostream& os, const Connection& conn){
-	os << "  connected with " << "something" << ", weight = " << conn.weight << endl;
-	return os;
+bool Connection::IsActive() const{
+	return active;
 }
 
 std::ostream& operator<<(std::ostream& os, const Node& node){
 	os << "  node bias: " << node.bias << endl;
 	for (const auto& conn : node.connections){
-		os << "    " << conn;
+		if (conn->IsActive()){
+			os << *conn;
+		}
 	}
 	return os;
 }
 
-
-vector<bool> DoubleToBoolVector(double value){
-	union{ uint64_t u; double d; } converter;
-	vector<bool> result;
-
-	converter.d = value;
-
-	while (result.size() < 8 * sizeof(double)){
-		result.insert(result.begin(), (converter.u & 1));
-		converter.u >>= 1;
-	}
-
-	return result;
-}
-
-double BoolVectorToDouble(vector<bool>& vec, int start){
-	union{ uint64_t u; double d; } converter;
-	int end = start + 8 * sizeof(double);
-	converter.u = 0;
-
-	for (int i = start; i < end; i++){
-		converter.u |= vec.at(i);
-		if (i + 1 < end)
-			converter.u <<= 1;
-	}
-	return converter.d;
+ostream& operator<<(ostream& os, const Connection& conn){
+	os << "      conn weight = " << conn.weight << endl;
+	return os;
 }

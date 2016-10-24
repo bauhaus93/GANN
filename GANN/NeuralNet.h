@@ -7,14 +7,13 @@
 #include <bitset>
 
 #include "Layer.h"
-
-
+#include "utility.h"
 
 class NeuralNet{
 
-	std::vector<Layer> layers;
-	const int layerCount;
-	const int layerSize;
+	std::vector<Layer*> layers;
+	int					layerCount;
+	int					layerSize;
 
 	std::random_device dev;
 	std::mt19937 rng;
@@ -29,9 +28,15 @@ public:
 	NeuralNet&					operator=(NeuralNet&& other);
 								~NeuralNet();
 	void						CreateRandom();
-	std::vector<double>			Simulate(std::vector<double>& inputValues);
+	void						Simulate(std::vector<double>& input, std::vector<double>& output);
 	std::vector<bool>			Encode() const;
 	void						Decode(std::vector<bool>& encoding);
+	int							DecodeLayer(std::vector<bool>& encoding, int start, Layer& srcLayer, Layer& destLayer);
+	int							DecodeLayer(std::vector<bool>& encoding, int start, Layer& layer);
+	int							DecodeNode(std::vector<bool>& encoding, int start, Node& node, Layer& destLayer);
+	int							DecodeNode(std::vector<bool>& encoding, int start, Node & node);
+	void						MinimizeNetwork();
+	void						RemoveNonForwardingNodes();
 	int							GetLayerCount() const;
 	int							GetLayerSize() const;
 	Layer&						operator[](int index);

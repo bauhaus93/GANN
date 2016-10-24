@@ -6,17 +6,17 @@
 #include <cmath>
 #include <algorithm>
 
-static std::vector<bool> DoubleToBoolVector(double value);
-static double BoolVectorToDouble(std::vector<bool>& vec, int start);
+#include "utility.h"
+
 
 class Connection;
 
 class Node{
 
-	double bias;
-	double value;
+	double	bias;
+	double	value;
 
-	std::vector<Connection> connections;
+	std::vector<Connection*> connections;
 
 public:
 				Node();
@@ -25,11 +25,18 @@ public:
 				~Node();
 
 	void		SetBias(double bias_);
+	void		SetValue(double value_);
+	void		ModValue(double input);
+	double		GetValue() const;
+	void		AddConnection(bool active, Node& node, double weight);
+	int			GetConnectionCount() const;
 	void		Clear(void);
-	double		GetOutput(void) const;
+	double		Activation() const;
+	int			GetMaxDepth() const;
+	void		FeedForward();
+
 	Connection&	operator[](int index);
-	int			Decode(std::vector<bool>& encoding, int start, std::vector<std::unique_ptr<Node>>& destNodes);
-	int			Decode(std::vector<bool>& encoding, int start, int layerSize);
+	
 
 	friend std::ostream&	operator<<(std::ostream& os, const Node& node);
 };
@@ -37,14 +44,16 @@ public:
 class Connection{
 
 private:
+	bool		active;
 	Node&		dest;
 	double		weight;
 
 public:
-	Connection(Node& dest_, double weight_);
-	~Connection();
+							Connection(bool active_, Node& dest_, double weight_);
+							~Connection();
 
 	Node&					GetDest() const;
 	double					GetWeight() const;
+	bool					IsActive() const;
 	friend std::ostream&	operator<<(std::ostream& os, const Connection& conn);
 };
