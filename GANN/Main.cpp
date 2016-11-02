@@ -15,6 +15,10 @@ extern bool RunTests(void);
 
 int main(int argc, char **argv){
 
+	RunTests();
+
+	return 0;
+
 	NeuralNet nn(4, 4);
 	nn.CreateRandom();
 	vector<double> input = { 1, 2, 3, 4 };
@@ -28,7 +32,7 @@ int main(int argc, char **argv){
 	Drawer d(1024, 768);
 	DrawNetwork(d, nn, 100, 100, 500, 500);
 
-	al_rest(3.0);
+	al_rest(30.0);
 
 	return 0;
 }
@@ -66,6 +70,7 @@ void DrawNetwork(Drawer& drawer, NeuralNet& net, int startX, int startY, int wid
 
 		}
 	}
+	drawer.SetColor(0xFF, 0xFF, 0xFF);
 	drawer.Rect(startX, startY, width, height);
 	drawer.Flip();
 

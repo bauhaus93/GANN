@@ -34,6 +34,10 @@ double Node::GetValue() const{
 	return value;
 }
 
+double Node::GetBias() const{
+	return bias;
+}
+
 void Node::AddConnection(bool active, Node & node, double weight){
 	auto conn = new Connection(active, node, weight);
 	connections.push_back(conn);

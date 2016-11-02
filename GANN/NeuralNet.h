@@ -7,6 +7,8 @@
 #include <bitset>
 
 #include "Layer.h"
+#include "Decoder.h"
+#include "Encoder.h"
 #include "utility.h"
 
 class NeuralNet{
@@ -19,6 +21,7 @@ class NeuralNet{
 	std::mt19937 rng;
 
 	std::vector<bool>			CreateRandomLayer(void);
+	std::vector<bool>			CreateRandomOutputLayer(void);
 
 public:
 
@@ -29,14 +32,8 @@ public:
 								~NeuralNet();
 	void						CreateRandom();
 	void						Simulate(std::vector<double>& input, std::vector<double>& output);
-	std::vector<bool>			Encode() const;
+	std::vector<bool>			Encode();
 	void						Decode(std::vector<bool>& encoding);
-	int							DecodeLayer(std::vector<bool>& encoding, int start, Layer& srcLayer, Layer& destLayer);
-	int							DecodeLayer(std::vector<bool>& encoding, int start, Layer& layer);
-	int							DecodeNode(std::vector<bool>& encoding, int start, Node& node, Layer& destLayer);
-	int							DecodeNode(std::vector<bool>& encoding, int start, Node & node);
-	void						MinimizeNetwork();
-	void						RemoveNonForwardingNodes();
 	int							GetLayerCount() const;
 	int							GetLayerSize() const;
 	Layer&						operator[](int index);
@@ -44,6 +41,12 @@ public:
 
 	friend std::ostream&		operator<<(std::ostream& os, const NeuralNet& net);
 	
+};
+
+class NeuralNetError : public std::runtime_error{
+
+public:
+	NeuralNetError(std::string msg);
 };
 
 

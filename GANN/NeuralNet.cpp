@@ -7,6 +7,11 @@ NeuralNet::NeuralNet(int layerCount_, int layerSize_) :
 	layerSize{ layerSize_ },
 	rng{ dev() }{
 
+	if (layerCount < 2)
+		throw NeuralNetError("layer count must be at least 2");
+	if (layerSize < 0)
+		throw NeuralNetError("layer size must be at least 1");
+
 	for (int i = 0; i < layerCount; i++){
 		auto layer = new Layer(layerSize);
 		layers.push_back(layer);
@@ -28,7 +33,7 @@ void NeuralNet::CreateRandom(){
 	vector<bool> encoding;
 
 	for (int i = 0; i < layerCount; i++){
-		auto layer = CreateRandomLayer();
+		auto layer = i + 1 < layerCount ? CreateRandomLayer() : CreateRandomOutputLayer();
 		encoding.insert(encoding.end(), layer.begin(), layer.end());
 	}
 
@@ -37,8 +42,6 @@ void NeuralNet::CreateRandom(){
 
 
 void NeuralNet::Simulate(std::vector<double>& input, vector<double>& output){
-
-	
 
 	for (auto& layer : layers)
 		layer->ClearNodeValues();
@@ -56,79 +59,30 @@ void NeuralNet::Simulate(std::vector<double>& input, vector<double>& output){
 }
 
 
-vector<bool> NeuralNet::Encode() const{
+vector<bool> NeuralNet::Encode(){
 	vector<bool> encoding;
+	Encoder enc(encoding, layers, layerCount, layerSize);
+
+	try{
+		enc.Run();
+	}
+	catch (const CodeError& e){
+		cout << e.what() << endl;
+	}
 	return encoding;
 }
 
-void NeuralNet::Decode(std::vector<bool>& encoding){
-	int pos = 0;
+void NeuralNet::Decode(vector<bool>& encoding){
+	Decoder dec(encoding, layers, layerCount, layerSize);
 
-	for (int i = 0; i + 1 < layerCount; i++){
-		pos = DecodeLayer(encoding, pos, *layers.at(i), *layers.at(i + 1));
+	try{
+		dec.Run();
 	}
-
-	pos = DecodeLayer(encoding, pos, *layers.back());
-
-	MinimizeNetwork();
-
-	if (pos != encoding.size())
-		throw;
-}
-
-int NeuralNet::DecodeLayer(vector<bool>& encoding, int start, Layer& srcLayer, Layer& destLayer){
-	int pos = start;
-
-	for (int i = 0; i < srcLayer.GetNodeCount(); i++){
-		pos = DecodeNode(encoding, pos, srcLayer[i], destLayer);
+	catch (const CodeError& e){
+		cout << e.what() << endl;
 	}
-	return pos;
 }
 
-int NeuralNet::DecodeLayer(vector<bool>& encoding, int start, Layer& layer){
-	int pos = start;
-
-	for (int i = 0; i < layerSize; i++){
-		pos = DecodeNode(encoding, pos, layer[i]);
-	}
-	return pos;
-}
-
-int NeuralNet::DecodeNode(vector<bool>& encoding, int start, Node& node, Layer& destLayer){
-	int pos = start;
-	double bias = BoolVectorToDouble(encoding, pos);
-	pos += 8 * sizeof(double);
-
-	node.SetBias(bias);
-	for (int i = 0; i < layerSize; i++){
-		bool active = encoding.at(pos);
-		double weight = BoolVectorToDouble(encoding, pos + 1);
-		node.AddConnection(active, destLayer[i], weight);
-		pos += 1 + 8 * sizeof(double);
-	}
-	return pos;
-}
-
-int NeuralNet::DecodeNode(vector<bool>& encoding, int start, Node& node){
-	int pos = start;
-	double bias = BoolVectorToDouble(encoding, pos);
-	pos += 8 * sizeof(double);
-
-	node.SetBias(bias);
-
-	return pos + (1 + 8 * sizeof(double)) * layerSize;
-}
-
-void NeuralNet::MinimizeNetwork(){
-
-	//int maxDepth = layers.at(0)->GetMaxDepth();
-
-	//cout << "max depth from input: " << maxDepth << endl;
-}
-
-void NeuralNet::RemoveNonForwardingNodes(){
-
-}
 
 int NeuralNet::GetLayerCount() const{
 	return layerCount;
@@ -168,9 +122,25 @@ vector<bool> NeuralNet::CreateRandomLayer(void){
 	return encoding;
 }
 
+vector<bool> NeuralNet::CreateRandomOutputLayer(void){
+	vector<bool> encoding;
+	uniform_real_distribution<double> rnDb(-10, 10);
+
+	for (int i = 0; i < layerSize; i++){
+		double bias = rnDb(dev);
+		auto biasVec = DoubleToBoolVector(bias);
+		encoding.insert(encoding.end(), biasVec.begin(), biasVec.end());
+	}
+	return encoding;
+}
+
 std::ostream& operator<<(std::ostream& os, const NeuralNet& net){
 	os << "neural net: " << net.GetLayerCount() << " layers, " << net.GetLayerSize() << " max nodes per layer" << endl;
 	for (auto& layer : net.layers)
 		os << *layer;
 	return os;
+}
+
+NeuralNetError::NeuralNetError(std::string msg):
+runtime_error("neural network error: " + msg){
 }

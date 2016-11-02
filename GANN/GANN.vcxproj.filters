@@ -36,6 +36,15 @@
     <ClInclude Include="utility.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="Coder.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Encoder.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Decoder.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NeuralNet.cpp">
@@ -60,6 +69,15 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="utility.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Coder.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Encoder.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Decoder.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

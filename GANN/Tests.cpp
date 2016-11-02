@@ -4,6 +4,7 @@ using namespace std;
 
 static int TestIdempotence(int layerCount, int layerSize);
 static int TestCreateLayerCountOne(void);
+static int TestLayerSizeZero(void);
 
 bool RunTests(void){
 	int failed = 0;
@@ -13,9 +14,12 @@ bool RunTests(void){
 	if (TestCreateLayerCountOne() != 0)
 		failed++;
 
+	if (TestLayerSizeZero() != 0)
+		failed++;
+
 	cout << "test idempotence..." << endl;
-	for (int i = 2; i < 10; i++){
-		for (int j = 1; j < 10; j++){
+	for (int i = 2; i < 8; i++){
+		for (int j = 1; j < 8; j++){
 			if (TestIdempotence(i, j) != 0)
 				failed++;
 		}
@@ -40,7 +44,22 @@ static int TestCreateLayerCountOne(void){
 
 	}
 	catch (exception& e){
-		//cout << "caught exception: " << e.what() << endl;
+		cout << "caught exception: " << e.what() << endl;
+	}
+	return 0;
+}
+
+static int TestLayerSizeZero(void){
+	cout << "test layer size zero..." << endl;
+
+	try{
+		NeuralNet n(1, 4);
+		cout << "no exception thrown with layer size zero!" << endl;
+		return 1;
+
+	}
+	catch (exception& e){
+		cout << "caught exception: " << e.what() << endl;
 	}
 	return 0;
 }
@@ -49,12 +68,15 @@ static int TestCreateLayerCountOne(void){
 static int TestIdempotence(int layerCount, int layerSize){
 	NeuralNet n(layerCount, layerSize);
 	NeuralNet n2(layerCount, layerSize);
-	vector<double> input{ 1.2, 2.3 };
 	int mismatches = 0;
 
-	n.CreateRandom();
+	cout << "test idempotence with layercount = " << layerCount << ", layersize = " << layerSize << "..." << endl;
 
+	n.CreateRandom();
 	auto encode = n.Encode();
+
+
+	n2.Decode(encode);
 	auto encode2 = n2.Encode();
 
 	if (encode.size() != encode2.size()){

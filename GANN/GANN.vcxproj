@@ -19,7 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Coder.h" />
+    <ClInclude Include="Decoder.h" />
     <ClInclude Include="Drawer.h" />
+    <ClInclude Include="Encoder.h" />
     <ClInclude Include="Genetic.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="NeuralNet.h" />
@@ -28,7 +31,10 @@
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Coder.cpp" />
+    <ClCompile Include="Decoder.cpp" />
     <ClCompile Include="Drawer.cpp" />
+    <ClCompile Include="Encoder.cpp" />
     <ClCompile Include="Genetic.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Main.cpp" />
