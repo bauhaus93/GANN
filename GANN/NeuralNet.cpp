@@ -55,7 +55,6 @@ void NeuralNet::CreateRandom(){
 	Decode(encoding);
 }
 
-
 void NeuralNet::Simulate(std::vector<double>& input, vector<double>& output){
 
 	for (auto& layer : layers)
@@ -72,7 +71,6 @@ void NeuralNet::Simulate(std::vector<double>& input, vector<double>& output){
 		output.push_back((*out)[i].GetValue());
 	}
 }
-
 
 vector<bool> NeuralNet::Encode(){
 	vector<bool> encoding;
@@ -97,7 +95,6 @@ void NeuralNet::Decode(vector<bool>& encoding){
 		cout << e.what() << endl;
 	}
 }
-
 
 int NeuralNet::GetLayerCount() const{
 	return layerCount;
@@ -125,7 +122,7 @@ vector<bool> NeuralNet::CreateRandomLayer(void){
 		encoding.insert(encoding.end(), biasVec.begin(), biasVec.end());
 
 		for (int j = 0; j < layerSize; j++){
-			bool active = true;// && rng() % 100 < 75 ? false : true;
+			bool active = true;// && rng() % 100 < 25 ? false : true;
 			double weight = rnDb(dev);
 			auto weightVec = DoubleToBoolVector(weight);
 

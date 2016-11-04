@@ -2,8 +2,6 @@
 
 using namespace std;
 
-
-
 Layer::Layer(int nodeCount){
 
 	for (int i = 0; i < nodeCount; i++){
@@ -32,8 +30,6 @@ void Layer::FeedForward(){
 		node->FeedForward();
 	}
 }
-
-
 
 int Layer::GetNodeCount() const{
 	return nodes.size();

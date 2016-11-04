@@ -3,36 +3,49 @@
 
 
 #include "NeuralNet.h"
+#include "Genetic.h"
 #include "Drawer.h"
 #include "Tests.h"
 
 using namespace std;
 
-static void PrintVector(vector<double>& vec, string title);
-static void DrawNetwork(Drawer& drawer, NeuralNet& net, int startX, int startY, int width, int height);
+void PrintVector(vector<double>& vec, string title);
+void DrawNetwork(Drawer& drawer, NeuralNet& net, int startX, int startY, int width, int height);
 extern bool RunTests(void);
 
 
 int main(int argc, char **argv){
+	const int runs = 1e5;
+	const int layerCount = 4;
+	const int layerSize = 3;
+	const int populationSize = 20;
+	const double mutationChance = 0.05;
 
-	RunTests();
+	Genetic g(layerCount, layerSize, populationSize, mutationChance);
+	g.Run(runs);
 
-	return 0;
+	auto netCode = g.GetFittest();
 
-	NeuralNet nn(4, 4);
-	nn.CreateRandom();
-	vector<double> input = { 1, 2, 3, 4 };
+	NeuralNet nn(layerCount, layerSize);
+	nn.Decode(netCode);
+	vector<double> input;
 	vector<double> output;
 
-	nn.Simulate(input, output);
-	PrintVector(input, "input: ");
-	PrintVector(output, "output: ");
+	input.resize(layerSize);
+	for (int i = 0; i < 2; i++){
+		for (int j = 0; j < 2; j++){
+			input.at(0) = i;
+			input.at(1) = j;
+			nn.Simulate(input, output);
+			cout << i << " XOR " << j << " = " << (output.at(0) < 5 ? "0" : "1") << ", exactly " << output.at(0) << endl;
 
+		}
+	}
 
 	Drawer d(1024, 768);
 	DrawNetwork(d, nn, 100, 100, 500, 500);
-
 	al_rest(30.0);
+	system("pause");
 
 	return 0;
 }

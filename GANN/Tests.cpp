@@ -2,10 +2,6 @@
 
 using namespace std;
 
-static int TestIdempotence(int layerCount, int layerSize);
-static int TestCreateLayerCountOne(void);
-static int TestLayerSizeZero(void);
-
 bool RunTests(void){
 	int failed = 0;
 
@@ -18,8 +14,8 @@ bool RunTests(void){
 		failed++;
 
 	cout << "test idempotence..." << endl;
-	for (int i = 2; i < 8; i++){
-		for (int j = 1; j < 8; j++){
+	for (int i = 2; i < 5; i++){
+		for (int j = 1; j < 5; j++){
 			if (TestIdempotence(i, j) != 0)
 				failed++;
 		}
@@ -31,10 +27,16 @@ bool RunTests(void){
 	}
 	else
 		cout << "all tests sucessful" << endl;
+
+	if (failed == 0){
+		MeasureEncodingTime(4, 4);
+		MeasureDecodingTime(4, 4);
+	}
+
 	return failed == 0;
 }
 
-static int TestCreateLayerCountOne(void){
+int TestCreateLayerCountOne(void){
 	cout << "test layer count one creation..." << endl;
 
 	try{
@@ -49,7 +51,7 @@ static int TestCreateLayerCountOne(void){
 	return 0;
 }
 
-static int TestLayerSizeZero(void){
+int TestLayerSizeZero(void){
 	cout << "test layer size zero..." << endl;
 
 	try{
@@ -64,8 +66,7 @@ static int TestLayerSizeZero(void){
 	return 0;
 }
 
-
-static int TestIdempotence(int layerCount, int layerSize){
+int TestIdempotence(int layerCount, int layerSize){
 	NeuralNet n(layerCount, layerSize);
 	NeuralNet n2(layerCount, layerSize);
 	int mismatches = 0;
@@ -95,3 +96,28 @@ static int TestIdempotence(int layerCount, int layerSize){
 	return mismatches;
 }
 
+void MeasureEncodingTime(int count, int size){
+	NeuralNet n(count, size);
+
+	n.CreateRandom();
+
+	auto start = chrono::high_resolution_clock::now();
+	n.Encode();
+	auto diff = chrono::high_resolution_clock::now() - start;
+
+	cout << "encoding time of " << count << "x" << size << ": " << int(diff.count() * 1e3 * chrono::high_resolution_clock::time_point::period().num / chrono::high_resolution_clock::time_point::period().den) << "ms" << endl;
+}
+
+void MeasureDecodingTime(int count, int size){
+	NeuralNet n(count, size);
+	NeuralNet n2(count, size);
+
+	n.CreateRandom();
+	auto encoding = n.Encode();
+
+	auto start = chrono::high_resolution_clock::now();
+	n.Decode(encoding);
+	auto diff = chrono::high_resolution_clock::now() - start;
+
+	cout << "decoding time of " << count << "x" << size << ": " << int(diff.count() * 1e3 * chrono::high_resolution_clock::time_point::period().num / chrono::high_resolution_clock::time_point::period().den) << "ms" << endl;
+}
