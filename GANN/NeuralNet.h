@@ -26,7 +26,7 @@ class NeuralNet{
 public:
 
 								NeuralNet(int layerCount_, int layerSize_);
-								//NeuralNet(NeuralNet&& other);
+								NeuralNet(NeuralNet&& other);
 								NeuralNet(NeuralNet const& other) = delete;
 	NeuralNet&					operator=(NeuralNet&& other);
 								~NeuralNet();

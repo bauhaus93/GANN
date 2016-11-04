@@ -18,15 +18,30 @@ NeuralNet::NeuralNet(int layerCount_, int layerSize_) :
 	}
 }
 
+NeuralNet::NeuralNet(NeuralNet&& other){
+	layerCount = other.layerCount;
+	layerSize = other.layerSize;
+	layers = other.layers;
+
+	other.layers.clear();
+}
+
 NeuralNet& NeuralNet::operator=(NeuralNet&& other){
 	if (this != &other){
+		layerCount = other.layerCount;
+		layerSize = other.layerSize;
+		layers = other.layers;
 
+		other.layers.clear();
 	}
 	return *this;
 }
 
 NeuralNet::~NeuralNet(){
-
+	while (!layers.empty()){
+		delete layers.back();
+		layers.pop_back();
+	}
 }
 
 void NeuralNet::CreateRandom(){

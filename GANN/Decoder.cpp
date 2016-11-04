@@ -2,6 +2,8 @@
 
 using namespace std;
 
+#include <iostream>
+
 Decoder::Decoder(vector<bool>& code_, vector<Layer*>& layers_, int layerCount_, int layerSize_) :
 	Coder(code_, layers_, layerCount_, layerSize_){
 }
@@ -21,7 +23,13 @@ void Decoder::Run(){
 		}
 	}
 
-	DecodeLayer(*layers.back());
+	try{
+		DecodeLayer(*layers.back());
+	}
+	catch (const out_of_range& e){
+		throw DecodeErrorInvalidIndex(pos, code.size());
+	}
+
 	if (pos != code.size())
 		throw DecodeErrorBitsReadMismatch(pos, code.size());
 }
@@ -54,8 +62,5 @@ void Decoder::DecodeNode(Node& node, Layer& destLayer){
 void Decoder::DecodeNode(Node& node){
 	double bias = BoolVectorToDouble(code, pos);
 	pos += 8 * sizeof(double);
-
 	node.SetBias(bias);
-
-	pos += (1 + 8 * sizeof(double)) * layerSize;
 }
