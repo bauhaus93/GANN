@@ -2,7 +2,35 @@
 
 using namespace std;
 
+#define AND {	0, 0, 0,\
+				0, 1, 0,\
+				1, 0, 0,\
+				1, 1, 1}
 
+#define OR {	0, 0, 0,\
+				0, 1, 1,\
+				1, 0, 1,\
+				1, 1, 1}
+
+#define NOR {	0, 0, 1,\
+				0, 1, 0,\
+				1, 0, 0,\
+				1, 1, 0}
+
+#define NAND {	0, 0, 1,\
+				0, 1, 1,\
+				1, 0, 1,\
+				1, 1, 0}
+
+#define IMPL {	0, 0, 1,\
+				0, 1, 1,\
+				1, 0, 0,\
+				1, 1, 1}
+
+#define XOR {	0, 0, 0,\
+				0, 1, 1,\
+				1, 0, 1,\
+				1, 1, 0}
 
 Genetic::Genetic(int layerCount_, int layerSize_, int populationSize, double mutationChance_) :
 	layerCount{ layerCount_ },
@@ -165,10 +193,7 @@ double GetScore(NeuralNet& net){
 	double score = 0;
 	vector<double> input;
 	vector<double> output;
-	vector<double> values = {	0, 0, 0,
-								0, 1, 1,
-								1, 0, 1,
-								1, 1, 0 };
+	vector<double> values = AND;
 
 	input.resize(net.GetLayerSize());
 	for (int i = 0; i < values.size(); i += 3){

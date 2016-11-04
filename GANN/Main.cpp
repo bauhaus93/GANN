@@ -37,7 +37,7 @@ int main(int argc, char **argv){
 			input.at(0) = i;
 			input.at(1) = j;
 			nn.Simulate(input, output);
-			cout << i << " XOR " << j << " = " << output.at(0) << endl;
+			cout << i << " OP " << j << " = " << output.at(0) << endl;
 
 		}
 	}
@@ -45,7 +45,6 @@ int main(int argc, char **argv){
 	Drawer d(1024, 768);
 	DrawNetwork(d, nn, 100, 100, 500, 500);
 	al_rest(30.0);
-	system("pause");
 
 	return 0;
 }
