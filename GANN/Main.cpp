@@ -16,8 +16,8 @@ extern bool RunTests(void);
 
 int main(int argc, char **argv){
 	const int runs = 1e5;
-	const int layerCount = 4;
-	const int layerSize = 3;
+	const int layerCount = 3;
+	const int layerSize = 2;
 	const int populationSize = 20;
 	const double mutationChance = 0.05;
 
@@ -37,7 +37,7 @@ int main(int argc, char **argv){
 			input.at(0) = i;
 			input.at(1) = j;
 			nn.Simulate(input, output);
-			cout << i << " XOR " << j << " = " << (output.at(0) < 5 ? "0" : "1") << ", exactly " << output.at(0) << endl;
+			cout << i << " XOR " << j << " = " << output.at(0) << endl;
 
 		}
 	}

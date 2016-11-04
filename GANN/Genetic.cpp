@@ -165,7 +165,10 @@ double GetScore(NeuralNet& net){
 	double score = 0;
 	vector<double> input;
 	vector<double> output;
-	vector<double> values = { 0, 0, 2.5, 1, 0, 7.5, 0, 1, 7.5, 1, 1, 0 };
+	vector<double> values = {	0, 0, 1,
+								0, 1, 1,
+								1, 0, 0,
+								1, 1, 1 };
 
 	input.resize(net.GetLayerSize());
 	for (int i = 0; i < values.size(); i += 3){
@@ -173,9 +176,9 @@ double GetScore(NeuralNet& net){
 		input.at(1) = values.at(i+1);
 		net.Simulate(input, output);
 		double result = output.at(0);
-		if (result < 0 || result > 10)
+		if (result < -1 || result > 1)
 			return 0;
-		score += 1 - DistanceFromTarget(result, values.at(i+2), 0, 10);
+		score += 1 - DistanceFromTarget(result, values.at(i+2), -1, 1);
 	}
 	return score;
 }
@@ -183,6 +186,8 @@ double GetScore(NeuralNet& net){
 double DistanceFromTarget(double is, double target, double min, double max){
 	if (is > target)
 		swap(is, target);
+	if (min > max)
+		swap(min, max);
 	return (target - is) / (max-min);
 }
 

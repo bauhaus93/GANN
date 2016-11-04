@@ -28,6 +28,7 @@ public:
 	void		SetValue(double value_);
 	void		ModValue(double input);
 	double		GetValue() const;
+	double		GetOutput() const;
 	double		GetBias() const;
 	void		AddConnection(bool active, Node& node, double weight);
 	int			GetConnectionCount() const;

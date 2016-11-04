@@ -68,7 +68,7 @@ void NeuralNet::Simulate(std::vector<double>& input, vector<double>& output){
 	auto& out = layers.back();
 	output.clear();
 	for (int i = 0; i < out->GetNodeCount(); i++){
-		output.push_back((*out)[i].GetValue());
+		output.push_back((*out)[i].GetOutput());
 	}
 }
 
@@ -139,7 +139,7 @@ vector<bool> NeuralNet::CreateRandomOutputLayer(void){
 	uniform_real_distribution<double> rnDb(-10, 10);
 
 	for (int i = 0; i < layerSize; i++){
-		double bias = rnDb(dev);
+		double bias = 0;// rnDb(dev);
 		auto biasVec = DoubleToBoolVector(bias);
 		encoding.insert(encoding.end(), biasVec.begin(), biasVec.end());
 	}

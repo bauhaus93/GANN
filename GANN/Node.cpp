@@ -34,6 +34,10 @@ double Node::GetValue() const{
 	return value;
 }
 
+double Node::GetOutput() const{
+	return Activation();
+}
+
 double Node::GetBias() const{
 	return bias;
 }
@@ -73,7 +77,6 @@ int Node::GetMaxDepth() const{
 
 void Node::FeedForward(){
 	double output = Activation();
-
 	for (auto& conn : connections){
 		if (conn->IsActive()){
 			conn->GetDest().ModValue(output * conn->GetWeight());
