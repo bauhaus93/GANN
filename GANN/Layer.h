@@ -18,11 +18,11 @@ public:
 							~Layer();
 
 	void					MakeInput(std::vector<double>& input);
+	std::vector<double>		GetOutput() const;
 	void					FeedForward();
 	int						GetNodeCount() const;
 	void					ClearNodeValues();
 	bool					HasConnections() const;
-	int						GetMaxDepth() const;
 
 	Node&					operator[](int index);
 

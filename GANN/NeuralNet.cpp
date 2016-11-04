@@ -60,16 +60,18 @@ void NeuralNet::Simulate(std::vector<double>& input, vector<double>& output){
 	for (auto& layer : layers)
 		layer->ClearNodeValues();
 
-	layers.at(0)->MakeInput(input);
+	try{
+		layers.front()->MakeInput(input);
+	}
+	catch (const exception& e){
+		throw NeuralNetError(e.what());
+	}
+
 	for (auto& layer : layers){
 		layer->FeedForward();
 	}
 
-	auto& out = layers.back();
-	output.clear();
-	for (int i = 0; i < out->GetNodeCount(); i++){
-		output.push_back((*out)[i].GetOutput());
-	}
+	output = layers.back()->GetOutput();
 }
 
 vector<bool> NeuralNet::Encode(){

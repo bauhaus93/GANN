@@ -25,6 +25,14 @@ void Layer::MakeInput(std::vector<double>& input){
 	}
 }
 
+vector<double> Layer::GetOutput() const{
+	vector<double> output;
+	output.resize(nodes.size());
+	for (int i = 0; i < nodes.size(); i++)
+		output.at(i) = nodes[i]->GetOutput();
+	return output;
+}
+
 void Layer::FeedForward(){
 	for (auto& node : nodes){
 		node->FeedForward();
@@ -47,16 +55,6 @@ bool Layer::HasConnections() const{
 			return true;
 	}
 	return false;
-}
-
-int Layer::GetMaxDepth() const{
-	int currMax = 0;
-
-	for (auto& node : nodes){
-		int depth = node->GetMaxDepth();
-		currMax = max(currMax, depth);
-	}
-	return currMax;
 }
 
 Node& Layer::operator[](int index){

@@ -8,6 +8,7 @@
 
 #include "utility.h"
 
+static double Activation(double value);
 
 class Connection;
 
@@ -33,8 +34,6 @@ public:
 	void		AddConnection(bool active, Node& node, double weight);
 	int			GetConnectionCount() const;
 	void		Clear(void);
-	double		Activation() const;
-	int			GetMaxDepth() const;
 	void		FeedForward();
 
 	Connection&	operator[](int index);

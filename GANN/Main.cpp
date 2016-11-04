@@ -15,7 +15,7 @@ extern bool RunTests(void);
 
 
 int main(int argc, char **argv){
-	const int runs = 1e5;
+	const int runs = 1e7;
 	const int layerCount = 3;
 	const int layerSize = 2;
 	const int populationSize = 20;

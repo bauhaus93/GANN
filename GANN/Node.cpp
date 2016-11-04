@@ -2,6 +2,10 @@
 
 using namespace std;
 
+double Activation(double value){
+	return 1 / (1 + exp(-value));
+}
+
 Node::Node() : Node(0.0){
 }
 
@@ -35,7 +39,7 @@ double Node::GetValue() const{
 }
 
 double Node::GetOutput() const{
-	return Activation();
+	return Activation(value);
 }
 
 double Node::GetBias() const{
@@ -55,28 +59,12 @@ void Node::Clear(void){
 	value = bias;
 }
 
-double Node::Activation() const{
-	return 1 / (1 + exp(-value));
-}
-
 Connection& Node::operator[](int index){
 	return *connections.at(index);
 }
 
-int Node::GetMaxDepth() const{
-	int currMax = 0;
-
-	for (auto& conn : connections){
-		if (conn->IsActive()){
-			int depth = conn->GetDest().GetMaxDepth() + 1;
-			currMax = max(currMax, depth);
-		}
-	}
-	return currMax;
-}
-
 void Node::FeedForward(){
-	double output = Activation();
+	double output = GetOutput();
 	for (auto& conn : connections){
 		if (conn->IsActive()){
 			conn->GetDest().ModValue(output * conn->GetWeight());

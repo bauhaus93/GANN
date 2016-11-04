@@ -165,10 +165,10 @@ double GetScore(NeuralNet& net){
 	double score = 0;
 	vector<double> input;
 	vector<double> output;
-	vector<double> values = {	0, 0, 1,
+	vector<double> values = {	0, 0, 0,
 								0, 1, 1,
-								1, 0, 0,
-								1, 1, 1 };
+								1, 0, 1,
+								1, 1, 0 };
 
 	input.resize(net.GetLayerSize());
 	for (int i = 0; i < values.size(); i += 3){
