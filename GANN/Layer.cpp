@@ -19,8 +19,8 @@ Layer::~Layer(){
 
 void Layer::MakeInput(std::vector<double>& input){
 	if (nodes.size() != input.size())
-		throw exception("input does not match input layer size");
-	for (int i = 0; i < nodes.size(); i++){
+		throw runtime_error("input does not match input layer size");
+	for (size_t i = 0; i < nodes.size(); i++){
 		nodes.at(i)->SetValue(input.at(i));
 	}
 }
@@ -28,7 +28,7 @@ void Layer::MakeInput(std::vector<double>& input){
 vector<double> Layer::GetOutput() const{
 	vector<double> output;
 	output.resize(nodes.size());
-	for (int i = 0; i < nodes.size(); i++)
+	for (size_t i = 0; i < nodes.size(); i++)
 		output.at(i) = nodes[i]->GetOutput();
 	return output;
 }
@@ -63,7 +63,7 @@ Node& Layer::operator[](int index){
 
 std::ostream& operator<<(std::ostream& os, const Layer& layer){
 	os << "  layer node count: " << layer.nodes.size() << endl;
-	for(int i = 0; i < layer.nodes.size(); i++)
+	for(size_t i = 0; i < layer.nodes.size(); i++)
 		os << "  " << *layer.nodes.at(i);
 	return os;
 }

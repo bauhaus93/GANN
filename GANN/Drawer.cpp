@@ -6,14 +6,14 @@ Drawer::Drawer(int displayX, int displayY) :
 	display{ nullptr }{
 
 	if (!al_init())
-		throw exception("ERROR: al_init()");
+		throw runtime_error("ERROR: al_init()");
 
 	if (!al_init_primitives_addon())
-		throw exception("ERROR: al_init_primitives_addon()");
+		throw runtime_error("ERROR: al_init_primitives_addon()");
 
 	display = al_create_display(displayX, displayY);
 	if (display == nullptr)
-		throw exception("ERROR: al_create_display(x, y)");
+		throw runtime_error("ERROR: al_create_display(x, y)");
 
 	currColor = al_map_rgb(0, 0, 0);
 }

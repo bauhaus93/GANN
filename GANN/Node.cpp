@@ -2,7 +2,7 @@
 
 using namespace std;
 
-double Activation(double value){
+static double Activation(double value){
 	return 1 / (1 + exp(-value));
 }
 

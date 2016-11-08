@@ -9,7 +9,7 @@
 #include "Layer.h"
 #include "Decoder.h"
 #include "Encoder.h"
-#include "utility.h"
+#include "Utility.h"
 
 class NeuralNet{
 

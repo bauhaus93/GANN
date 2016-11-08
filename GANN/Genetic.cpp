@@ -32,19 +32,25 @@ using namespace std;
 				1, 0, 1,\
 				1, 1, 0}
 
-Genetic::Genetic(int layerCount_, int layerSize_, int populationSize, double mutationChance_) :
-	layerCount{ layerCount_ },
-	layerSize{ layerSize_ },
-	rng{ dev() },
-	mutationChance{ mutationChance_ }{
 
+
+static double DistanceFromTarget(double is, double target, double min, double max);
+static double GetScore(NeuralNet& net);
+static int Distance(vector<bool> a, vector<bool> b);
+
+Genetic::Genetic(int layerCount_, int layerSize_, int populationSize, double mutationChance_) :
+	mutationChance{ mutationChance_ },
+	layerCount{ layerCount_ },
+	layerSize{ layerSize_ }{
+	random_device dev;
+	rng.seed(dev());
 	Populate(populationSize);
 }
 
 Genetic::~Genetic(){
 }
 
-void Genetic::Run(int times){
+void Genetic::Run(uint64_t times){
 	uint64_t rate = 1e1;
 
 	for (uint64_t i = 0; i < times; i++){
@@ -115,10 +121,10 @@ void Genetic::RunOnce(){
 pair<int, int> Genetic::Select(double step){
 	double r1 = static_cast<double>(rng() % 100) / 100;
 	double r2 = static_cast<double>(rng() % 100) / 100;
-	int first = -1, second = -1;
+	size_t first = -1, second = -1;
 
 	double chance = 1 / step;
-	for (int i = 0; i < population.size(); i++){
+	for (size_t i = 0; i < population.size(); i++){
 		if (r1 < chance){
 			first = i;
 			break;
@@ -131,7 +137,7 @@ pair<int, int> Genetic::Select(double step){
 
 
 	chance = 1 / step;
-	for (int i = 0; i < population.size(); i++){
+	for (size_t i = 0; i < population.size(); i++){
 		if (r2 < chance && i != first){
 			second = i;
 			break;
@@ -158,8 +164,8 @@ vector<bool> Genetic::Crossover(vector<bool> parentA, vector<bool> parentB){
 void Genetic::Mutate(vector<bool>& individual, int flips){
 
 	while (flips-- > 0){
-		auto& bit = individual.at(rng() % individual.size());
-		bit = !bit;
+		size_t pos = rng() % individual.size();
+		individual.at(pos) = !individual.at(pos);
 	}
 }
 
@@ -170,7 +176,7 @@ vector<bool> Genetic::GetFittest(void){
 double Genetic::PopulationDistance(vector<bool> individual){
 	int dist = Distance(population.front().encoding, individual);
 
-	for (int i = 1; i < population.size(); i++){
+	for (size_t i = 1; i < population.size(); i++){
 		dist = min(dist, Distance(population.at(i).encoding, individual));
 	}
 	return static_cast<double>(dist) / (individual.size());
@@ -178,7 +184,7 @@ double Genetic::PopulationDistance(vector<bool> individual){
 
 int Distance(vector<bool> a, vector<bool> b){
 	int distance = 0;
-	for (int i = 0; i < a.size(); i++){
+	for (size_t i = 0; i < a.size(); i++){
 		if (a.at(i) != b.at(i))
 			distance++;
 	}
@@ -196,7 +202,7 @@ double GetScore(NeuralNet& net){
 	vector<double> values = AND;
 
 	input.resize(net.GetLayerSize());
-	for (int i = 0; i < values.size(); i += 3){
+	for (size_t i = 0; i < values.size(); i += 3){
 		input.at(0) = values.at(i);
 		input.at(1) = values.at(i+1);
 		net.Simulate(input, output);

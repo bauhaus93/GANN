@@ -15,7 +15,7 @@ extern bool RunTests(void);
 
 
 int main(int argc, char **argv){
-	const int runs = 1e7;
+	const int runs = 2e3;
 	const int layerCount = 3;
 	const int layerSize = 2;
 	const int populationSize = 20;
@@ -90,7 +90,7 @@ void DrawNetwork(Drawer& drawer, NeuralNet& net, int startX, int startY, int wid
 
 void PrintVector(vector<double>& vec, string title){
 	cout << title;
-	for (int i = 0; i < vec.size(); i++){
+	for (size_t i = 0; i < vec.size(); i++){
 		cout << vec[i];
 		if (i + 1 == vec.size())
 			cout << endl;

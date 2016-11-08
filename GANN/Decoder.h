@@ -4,7 +4,7 @@
 
 #include "Coder.h"
 #include "Layer.h"
-#include "utility.h"
+#include "Utility.h"
 
 class Decoder :
 	public Coder{

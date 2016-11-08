@@ -9,7 +9,7 @@
 
 #include "NeuralNet.h"
 
-typedef struct Individual{
+struct Individual{
 	double				score;
 	NeuralNet			network;
 	std::vector<bool>	encoding;
@@ -18,10 +18,9 @@ typedef struct Individual{
 	Individual& operator=(Individual&& other);
 };
 
+
+
 bool Fitness(Individual const& a, Individual const& b);
-static int Distance(std::vector<bool> a, std::vector<bool> b);
-static double GetScore(NeuralNet& net);
-static double DistanceFromTarget(double is, double target, double min, double max);
 
 
 
@@ -33,7 +32,6 @@ class Genetic{
 	int layerCount;
 	int layerSize;
 
-	std::random_device dev;
 	std::mt19937 rng;
 
 	std::pair<int, int> Select(double step);
@@ -49,7 +47,7 @@ public:
 						Genetic(int layerCount_, int layerSize_, int populationSize, double mutationChance);
 						~Genetic();
 
-	void				Run(int times);
+	void				Run(uint64_t times);
 	std::vector<bool>	GetFittest(void);
 
 };

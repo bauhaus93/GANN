@@ -1,6 +1,11 @@
 #include "Tests.h"
 
 using namespace std;
+static int TestIdempotence(int layerCount, int layerSize);
+static int TestCreateLayerCountOne(void);
+static int TestLayerSizeZero(void);
+static void MeasureEncodingTime(int count, int size);
+static void MeasureDecodingTime(int count, int size);
 
 bool RunTests(void){
 	int failed = 0;
@@ -85,7 +90,7 @@ int TestIdempotence(int layerCount, int layerSize){
 		return -1;
 	}
 	else{
-		for (int i = 0; i < encode.size(); i++){
+		for (size_t i = 0; i < encode.size(); i++){
 			if (encode.at(i) != encode2.at(i)){
 				cout << "mismatch at row " << i << ": " << encode.at(i) << " / " << encode2.at(i) << endl;
 				mismatches++;

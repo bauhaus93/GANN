@@ -6,9 +6,8 @@
 #include <cmath>
 #include <algorithm>
 
-#include "utility.h"
+#include "Utility.h"
 
-static double Activation(double value);
 
 class Connection;
 
