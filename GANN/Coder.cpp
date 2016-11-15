@@ -8,6 +8,7 @@ Coder::Coder(std::vector<bool>& code_, std::vector<Layer*>& layers_, int layerCo
 	layerCount{ layerCount_ },
 	layerSize{ layerSize_ },
 	pos{ 0 }{
+
 }
 
 Coder::~Coder(){
