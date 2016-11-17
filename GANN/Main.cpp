@@ -15,7 +15,7 @@ extern bool RunTests(void);
 
 
 int main(int argc, char **argv){
-	const int runs = 1e3;
+	const int runs = 1e8;
 	const int layerCount = 3;
 	const int layerSize = 2;
 	const int populationSize = 20;
@@ -43,7 +43,7 @@ int main(int argc, char **argv){
 	}
 
 	Drawer d(800, 600);
-	DrawNetwork(d, nn, 0, 0, 800, 600);
+	DrawNetwork(d, nn, 0, 0, 1024, 768);
 	al_rest(5.0);
 
 	return 0;

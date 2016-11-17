@@ -33,9 +33,6 @@
     <ClInclude Include="Drawer.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="utility.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
     <ClInclude Include="Coder.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
@@ -43,6 +40,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Decoder.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,9 +68,6 @@
     <ClCompile Include="Drawer.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="utility.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="Coder.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -78,6 +75,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="Decoder.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
