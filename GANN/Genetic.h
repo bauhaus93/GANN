@@ -18,6 +18,17 @@ struct Individual{
 	Individual& operator=(Individual&& other);
 };
 
+struct RepopulationData{
+	int frequency;
+	double part;
+	RepopulationData(int frequency_, double part);
+};
+
+struct DiversityControlData{
+	int frequency;
+	double threshold;
+	DiversityControlData(int frequency_, double threshold_);
+};
 
 
 bool Fitness(Individual const& a, Individual const& b);
@@ -32,6 +43,9 @@ class Genetic{
 	int layerCount;
 	int layerSize;
 
+	std::unique_ptr<RepopulationData> repopulationData;
+	std::unique_ptr<DiversityControlData> diversityControlData;
+
 	std::mt19937 rng;
 
 	std::pair<int, int> Select(double step);
@@ -43,14 +57,17 @@ class Genetic{
 	double				PopulationDistance(std::vector<bool> individual);
 	void				RunOnce();
 
+	void				ControlDiversity(double threshold);
+
 public:
 						Genetic(int layerCount_, int layerSize_, int populationSize, double mutationChance);
 						~Genetic();
 
-	void				Run(uint64_t times);
+	uint64_t			Run(uint64_t times);
+	void				EnableRepopulation(int runs, int partOfPopulation);
+	void				EnableDiversityControl(int frequency, double minDiversity);
 	std::vector<bool>	GetFittest(void);
 
 };
-
 
 

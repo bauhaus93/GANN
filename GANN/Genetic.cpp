@@ -41,7 +41,9 @@ static int Distance(vector<bool> a, vector<bool> b);
 Genetic::Genetic(int layerCount_, int layerSize_, int populationSize, double mutationChance_) :
 	mutationChance{ mutationChance_ },
 	layerCount{ layerCount_ },
-	layerSize{ layerSize_ }{
+	layerSize{ layerSize_ },
+	repopulationData{ nullptr },
+	diversityControlData{ nullptr }{
 	random_device dev;
 	rng.seed(dev());
 	Populate(populationSize);
@@ -50,10 +52,11 @@ Genetic::Genetic(int layerCount_, int layerSize_, int populationSize, double mut
 Genetic::~Genetic(){
 }
 
-void Genetic::Run(uint64_t times){
+uint64_t Genetic::Run(uint64_t times){
 	uint64_t rate = 1e1;
+	uint64_t i;
 
-	for (uint64_t i = 0; i < times; i++){
+	for (i = 0; i < times; i++){
 		RunOnce();
 		if (i % rate == 0){
 
@@ -75,16 +78,32 @@ void Genetic::Run(uint64_t times){
 			}
 		}
 
-		if (i % 1000 == 0)
-			Repopulate(population.size() / 4);
+		if (repopulationData != nullptr){
+			if (i % repopulationData->frequency == 0)
+				Repopulate(population.size() * repopulationData->part);
+		}
+
+		if (diversityControlData != nullptr){
+			if (i % diversityControlData->frequency == 0)
+				ControlDiversity(diversityControlData->threshold);
+		}
 
 		if (population.front().score >= 4)
 			break;
 	}
+	return i;
 }
 
-void Genetic::Populate(int populationSize){
-	for (int i = 0; i < populationSize; i++){
+void Genetic::EnableRepopulation(int frequency, int partOfPopulation){
+	repopulationData = make_unique<RepopulationData>(frequency, partOfPopulation);
+}
+
+void Genetic::EnableDiversityControl(int frequency, double minDiversity){
+	diversityControlData = make_unique<DiversityControlData>(frequency, minDiversity);
+}
+
+void Genetic::Populate(int count){
+	for (int i = 0; i < count; i++){
 		NeuralNet n(layerCount, layerSize);
 		n.CreateRandom();
 		auto encoding = n.Encode();
@@ -99,7 +118,10 @@ void Genetic::Repopulate(int n){
 	Populate(n);
 }
 
+
+
 void Genetic::RunOnce(){
+
 	auto selection = Select(4);
 
 	auto parentA = population.at(selection.first).encoding;
@@ -109,13 +131,30 @@ void Genetic::RunOnce(){
 	if ((rng() % 100) / 100 < mutationChance)
 		Mutate(child, child.size() * 0.05);
 
-	if (PopulationDistance(child) > 0.05){
-		NeuralNet n(layerCount, layerSize);
-		n.Decode(child);
-		population.emplace_back(GetScore(n), move(n), child);
-		sort(population.begin(), population.end(), Fitness);
-		population.pop_back();
+	double dist = PopulationDistance(child);
+
+	NeuralNet n(layerCount, layerSize);
+	n.Decode(child);
+	population.emplace_back(GetScore(n), move(n), child);
+	sort(population.begin(), population.end(), Fitness);
+	population.pop_back();
+
+}
+
+void Genetic::ControlDiversity(double threshold){
+	int killCount = 0;
+	int minDistance = population.front().encoding.size() * threshold;
+
+	for (auto iter = population.begin(); iter + 1 != population.end(); iter++){
+		if (Distance(iter->encoding, (iter + 1)->encoding) < minDistance){
+			(iter + 1)->score = 0;
+			killCount++;
+		}
 	}
+
+	sort(population.begin(), population.end(), Fitness);
+	Repopulate(killCount);
+
 }
 
 pair<int, int> Genetic::Select(double step){
@@ -241,4 +280,14 @@ Individual & Individual::operator=(Individual && other){
 		encoding = other.encoding;
 	}
 	return *this;
+}
+
+RepopulationData::RepopulationData(int frequency_, double part_):
+	frequency{ frequency_ },
+	part{ part_ }{
+}
+
+DiversityControlData::DiversityControlData(int frequency_, double threshold_):
+	frequency{ frequency_ },
+	threshold{ threshold_ }{
 }
